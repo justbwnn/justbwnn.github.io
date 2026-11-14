@@ -34,7 +34,7 @@ body::after {
   mask-image: radial-gradient(circle at 50% 0%, #000, transparent 70%);
   -webkit-mask-image: radial-gradient(circle at 50% 0%, #000, transparent 70%);
 }
-.wrap { max-width: 760px; margin-inline: auto; padding: 96px 24px 64px; }
+.wrap { max-width: 760px; margin-inline: auto; padding: 96px 24px 64px; position: relative; }
 a { color: var(--accent); text-decoration: none; transition: color .2s; }
 a:hover { color: var(--fg); text-decoration: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
