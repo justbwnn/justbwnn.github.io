@@ -5,11 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>justbwnn</title>
 <meta name="description" content="Portofolio Alfonsus Benny Christian Saputra (justbwnn), mahasiswa Informatika Universitas Amikom Yogyakarta.">
+<meta property="og:title" content="justbwnn">
+<meta property="og:description" content="Portofolio Alfonsus Benny Christian Saputra — Informatika, Universitas Amikom Yogyakarta.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://justbwnn.dev/">
+<meta name="theme-color" content="#08090c">
+<script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<canvas id="bg" aria-hidden="true"></canvas>
+
 <nav class="nav" aria-label="Navigasi utama">
+  <a class="brand" href="#top">justbwnn<span class="cursor">_</span></a>
   <ul>
     <li><a href="#tentang">Tentang</a></li>
     <li><a href="#skill">Skill</a></li>
@@ -17,11 +27,12 @@
     <li><a href="#pendidikan">Pendidikan</a></li>
     <li><a href="#kontak">Kontak</a></li>
   </ul>
+  <button class="theme" id="theme" type="button" aria-label="Ganti tema">☾</button>
 </nav>
 
-<div class="wrap">
+<div class="wrap" id="top">
   <header>
-    <p class="eyebrow">justbwnn</p>
+    <p class="eyebrow">Portofolio · Yogyakarta</p>
     <h1>Benny <span class="accent">Christian</span></h1>
     <p class="role"><strong>Alfonsus Benny Christian Saputra</strong> · Informatika · Universitas Amikom Yogyakarta</p>
     <div class="cta">
@@ -54,18 +65,21 @@
 
   <section id="proyek" class="reveal">
     <h2>Proyek</h2>
-    <article class="project">
-      <h3>Nama Proyek 1</h3>
-      <p>Deskripsi singkat proyek.</p>
-      <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
-      <p style="margin-top:12px"><a class="more" href="#">Lihat →</a></p>
-    </article>
-    <article class="project">
-      <h3>Nama Proyek 2</h3>
-      <p>Deskripsi singkat proyek.</p>
-      <ul class="tags"><li>Python</li></ul>
-      <p style="margin-top:12px"><a class="more" href="#">Lihat →</a></p>
-    </article>
+    <div class="filters" role="group" aria-label="Filter proyek">
+      <button type="button" class="filter active" data-tag="all">Semua</button>
+      <button type="button" class="filter" data-tag="HTML">HTML</button>
+      <button type="button" class="filter" data-tag="JavaScript">JavaScript</button>
+      <button type="button" class="filter" data-tag="Python">Python</button>
+    </div>
+    <div class="grid" id="projects">
+      <article class="project" data-tags="HTML CSS JavaScript">
+        <h3>justbwnn.dev</h3>
+        <p>Situs portofolio pribadi ini — dibangun dari nol tanpa framework, di-hosting di GitHub Pages dengan domain kustom.</p>
+        <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+        <a class="more" href="https://github.com/justbwnn/justbwnn.github.io" target="_blank" rel="noopener">Kode →</a>
+      </article>
+    </div>
+    <p class="empty" id="empty" hidden>Belum ada proyek dengan kategori ini.</p>
   </section>
 
   <section id="pendidikan" class="reveal">
@@ -92,6 +106,8 @@
   <section id="kontak" class="reveal">
     <h2>Kontak</h2>
     <form action="https://formsubmit.co/bennychristian83@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Pesan dari justbwnn.dev">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <label>Nama <input name="name" required autocomplete="name"></label>
       <label>Email <input type="email" name="email" required autocomplete="email"></label>
       <label>Pesan <textarea name="message" required></textarea></label>
@@ -100,15 +116,136 @@
     <ul class="links" style="margin-top:24px">
       <li><a href="mailto:bennychristian83@gmail.com">Email</a></li>
       <li><a href="https://github.com/justbwnn" target="_blank" rel="noopener">GitHub</a></li>
+      <li><button type="button" class="copy" id="copy" data-email="bennychristian83@gmail.com">Salin Email</button></li>
     </ul>
   </section>
 
   <footer>© <span id="year"></span> justbwnn <span class="cursor">_</span></footer>
 </div>
+
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // theme toggle
+  const root = document.documentElement, btn = document.getElementById("theme");
+  const apply = t => {
+    root.dataset.theme = t;
+    btn.textContent = t === "light" ? "☀" : "☾";
+    btn.setAttribute("aria-label", t === "light" ? "Aktifkan tema gelap" : "Aktifkan tema terang");
+  };
+  apply(localStorage.getItem("theme") || "dark");
+  btn.addEventListener("click", () => {
+    const t = root.dataset.theme === "light" ? "dark" : "light";
+    localStorage.setItem("theme", t);
+    apply(t);
+  });
+
+  // project filter
+  const cards = [...document.querySelectorAll("#projects .project")];
+  const empty = document.getElementById("empty");
+  document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
+    document.querySelector(".filter.active").classList.remove("active");
+    b.classList.add("active");
+    const tag = b.dataset.tag;
+    let shown = 0;
+    cards.forEach(c => {
+      const ok = tag === "all" || c.dataset.tags.split(" ").includes(tag);
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    empty.hidden = shown > 0;
+  }));
+
+  // reveal on scroll
   const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .15 });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  // scroll progress
+  const bar = document.getElementById("progress");
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.setProperty("--p", max > 0 ? scrollY / max : 0);
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // active nav link
+  const links = [...document.querySelectorAll(".nav ul a")];
+  const secIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+  }), { rootMargin: "-40% 0px -55% 0px" });
+  document.querySelectorAll("section[id]").forEach(s => secIO.observe(s));
+
+  // copy email
+  const copyBtn = document.getElementById("copy");
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(copyBtn.dataset.email);
+      copyBtn.textContent = "Tersalin ✓";
+      copyBtn.classList.add("done");
+      setTimeout(() => { copyBtn.textContent = "Salin Email"; copyBtn.classList.remove("done"); }, 1800);
+    } catch {
+      location.href = "mailto:" + copyBtn.dataset.email;
+    }
+  });
+
+  // card spotlight follows cursor
+  if (!reduced) document.querySelectorAll(".project").forEach(card => {
+    card.addEventListener("pointermove", e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", e.clientX - r.left + "px");
+      card.style.setProperty("--my", e.clientY - r.top + "px");
+    });
+  });
+
+  // particle network background
+  const cv = document.getElementById("bg");
+  if (!reduced && cv.getContext) {
+    const ctx = cv.getContext("2d");
+    let W, H, pts = [];
+    const N = 34, LINK = 130;
+    function size() {
+      W = cv.width = innerWidth * devicePixelRatio;
+      H = cv.height = innerHeight * devicePixelRatio;
+      cv.style.width = innerWidth + "px";
+      cv.style.height = innerHeight + "px";
+      pts = Array.from({ length: N }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - .5) * .2 * devicePixelRatio,
+        vy: (Math.random() - .5) * .2 * devicePixelRatio
+      }));
+    }
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      const L = LINK * devicePixelRatio;
+      for (const p of pts) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      }
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const a = pts[i], b = pts[j];
+          const d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < L) {
+            ctx.strokeStyle = `rgba(94,234,212,${(1 - d / L) * .1})`;
+            ctx.lineWidth = devicePixelRatio * .6;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      for (const p of pts) {
+        ctx.fillStyle = root.dataset.theme === "light" ? "rgba(79,70,229,.22)" : "rgba(129,140,248,.35)";
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.2 * devicePixelRatio, 0, 7); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    size(); frame();
+    addEventListener("resize", size);
+  }
 </script>
 </body>
 </html>
