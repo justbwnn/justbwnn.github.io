@@ -13,7 +13,7 @@
 <script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark"; document.documentElement.classList.add("js");</script>
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="favicon.png">
-<link rel="stylesheet" href="style.css?v=20261114a">
+<link rel="stylesheet" href="style.css?v=20261114b">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -126,7 +126,11 @@
 
   // reveal on scroll — run first so content never stays hidden
   try {
-    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .15 });
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      io.unobserve(e.target);
+    }), { threshold: .15, rootMargin: "0px 0px -40px 0px" });
     document.querySelectorAll(".reveal").forEach(el => io.observe(el));
   } catch {
     document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
