@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>justbwnn</title>
+<meta name="description" content="Portofolio Alfonsus Benny Christian Saputra (justbwnn), mahasiswa Informatika Universitas Amikom Yogyakarta.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="nav" aria-label="Navigasi utama">
+  <ul>
+    <li><a href="#tentang">Tentang</a></li>
+    <li><a href="#skill">Skill</a></li>
+    <li><a href="#proyek">Proyek</a></li>
+    <li><a href="#pendidikan">Pendidikan</a></li>
+    <li><a href="#kontak">Kontak</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">justbwnn</p>
+    <h1>Benny <span class="accent">Christian</span></h1>
+    <p class="role"><strong>Alfonsus Benny Christian Saputra</strong> · Informatika · Universitas Amikom Yogyakarta</p>
+    <div class="cta">
+      <a class="primary" href="#kontak">Hubungi Saya</a>
+      <a href="https://github.com/justbwnn" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+
+  <section id="tentang" class="reveal">
+    <h2>Tentang</h2>
+    <p class="lead">Mahasiswa angkatan 2026 Program Studi Informatika, Fakultas Ilmu Komputer, Universitas Amikom Yogyakarta. Biasa dipanggil Benny.</p>
+    <p>Tertarik pada pengembangan web dan senang membangun antarmuka yang cepat, rapi, dan mudah dipakai. Di luar kuliah, saya menghabiskan waktu bermain musik — terutama gitar.</p>
+  </section>
+
+  <section id="skill" class="reveal">
+    <h2>Skill</h2>
+    <div class="skills">
+      <div class="skill-row"><span>HTML &amp; CSS</span><div class="bar"><i style="--w:85%"></i></div></div>
+      <div class="skill-row"><span>JavaScript</span><div class="bar"><i style="--w:70%"></i></div></div>
+      <div class="skill-row"><span>Git &amp; GitHub</span><div class="bar"><i style="--w:65%"></i></div></div>
+      <div class="skill-row"><span>Python</span><div class="bar"><i style="--w:55%"></i></div></div>
+    </div>
+    <h2 style="margin-top:32px">Minat</h2>
+    <ul class="tags">
+      <li>Web Development</li>
+      <li>Musik</li>
+      <li>Gitar</li>
+    </ul>
+  </section>
+
+  <section id="proyek" class="reveal">
+    <h2>Proyek</h2>
+    <article class="project">
+      <h3>Nama Proyek 1</h3>
+      <p>Deskripsi singkat proyek.</p>
+      <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+      <p style="margin-top:12px"><a class="more" href="#">Lihat →</a></p>
+    </article>
+    <article class="project">
+      <h3>Nama Proyek 2</h3>
+      <p>Deskripsi singkat proyek.</p>
+      <ul class="tags"><li>Python</li></ul>
+      <p style="margin-top:12px"><a class="more" href="#">Lihat →</a></p>
+    </article>
+  </section>
+
+  <section id="pendidikan" class="reveal">
+    <h2>Pendidikan</h2>
+    <ul class="timeline">
+      <li>
+        <time>2026 — sekarang</time>
+        <h3>Universitas Amikom Yogyakarta</h3>
+        <p>S1 Informatika, Fakultas Ilmu Komputer.</p>
+      </li>
+      <li>
+        <time>2023 — 2026</time>
+        <h3>SMA Negeri 1 Pakem</h3>
+        <p>Sleman, DI Yogyakarta.</p>
+      </li>
+      <li>
+        <time>2020 — 2023</time>
+        <h3>SMP Santo Aloysius Turi</h3>
+        <p>Turi, Sleman, DI Yogyakarta.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section id="kontak" class="reveal">
+    <h2>Kontak</h2>
+    <form action="https://formsubmit.co/bennychristian83@gmail.com" method="POST">
+      <label>Nama <input name="name" required autocomplete="name"></label>
+      <label>Email <input type="email" name="email" required autocomplete="email"></label>
+      <label>Pesan <textarea name="message" required></textarea></label>
+      <button type="submit">Kirim</button>
+    </form>
+    <ul class="links" style="margin-top:24px">
+      <li><a href="mailto:bennychristian83@gmail.com">Email</a></li>
+      <li><a href="https://github.com/justbwnn" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </section>
+
+  <footer>© <span id="year"></span> justbwnn <span class="cursor">_</span></footer>
+</div>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .15 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
