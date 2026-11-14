@@ -275,6 +275,21 @@ footer .cursor { color: var(--accent); animation: blink 1.1s steps(2, start) inf
 .contrib-legend i:first-of-type { margin-left: 4px; }
 .contrib-legend i:last-of-type { margin-right: 4px; }
 
+/* monthly activity timeline */
+.activity { list-style: none; margin: 28px 0 0; padding: 0 0 0 22px; position: relative; border-left: 1px solid var(--line); }
+.activity li { position: relative; padding: 0 0 22px; }
+.activity li:last-child { padding-bottom: 0; }
+.activity li::before {
+  content: ""; position: absolute; left: -27px; top: 5px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--bg); border: 2px solid var(--accent);
+}
+.act-month {
+  font: 600 .8125rem/1 var(--mono); color: var(--fg); margin: 0 0 6px;
+  letter-spacing: -.01em;
+}
+.act-body { margin: 0; font-size: .9375rem; color: var(--soft); }
+.act-body .muted { color: var(--muted); }
+
 /* scroll progress */
 .progress {
   position: fixed; top: 0; left: 0; z-index: 20; height: 2px; width: 100%;
