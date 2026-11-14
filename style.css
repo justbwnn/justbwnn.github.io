@@ -246,6 +246,35 @@ footer .cursor { color: var(--accent); animation: blink 1.1s steps(2, start) inf
 @keyframes revealFallback { to { opacity: 1; transform: none; } }
 .js .reveal { animation: revealFallback 0s 1.2s forwards; }
 
+/* github contribution graph */
+.contrib-total { font: 500 .875rem/1.4 var(--mono); color: var(--muted); margin: 0 0 14px; }
+.contrib-total b { color: var(--fg); font-size: 1.05rem; }
+.contrib-grid {
+  display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column;
+  grid-auto-columns: 1fr; gap: 3px; overflow-x: auto; padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+.contrib-grid i {
+  aspect-ratio: 1; border-radius: 2px; background: var(--line); min-width: 8px;
+  transition: transform .15s;
+}
+.contrib-grid i:hover { transform: scale(1.35); }
+.contrib-grid i.l1 { background: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.contrib-grid i.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.contrib-grid i.l3 { background: color-mix(in srgb, var(--accent) 85%, var(--line)); }
+.contrib-grid i.l4 { background: var(--accent); }
+.contrib-legend {
+  display: flex; align-items: center; gap: 4px; margin: 12px 0 0;
+  font: 400 .75rem/1 var(--mono); color: var(--muted);
+}
+.contrib-legend i { width: 10px; height: 10px; border-radius: 2px; background: var(--line); display: inline-block; }
+.contrib-legend i.l1 { background: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.contrib-legend i.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.contrib-legend i.l3 { background: color-mix(in srgb, var(--accent) 85%, var(--line)); }
+.contrib-legend i.l4 { background: var(--accent); }
+.contrib-legend i:first-of-type { margin-left: 4px; }
+.contrib-legend i:last-of-type { margin-right: 4px; }
+
 /* scroll progress */
 .progress {
   position: fixed; top: 0; left: 0; z-index: 20; height: 2px; width: 100%;

@@ -23,6 +23,7 @@
   <ul>
     <li><a href="#tentang">Tentang</a></li>
     <li><a href="#skill">Skill</a></li>
+    <li><a href="#aktivitas">Aktivitas</a></li>
     <li><a href="#proyek">Proyek</a></li>
     <li><a href="#pendidikan">Pendidikan</a></li>
     <li><a href="#kontak">Kontak</a></li>
@@ -62,6 +63,13 @@
       <li><a href="https://www.google.com/search?q=apa+itu+gitar" target="_blank" rel="noopener">Gitar</a></li>
       <li><a href="https://www.google.com/search?q=apa+itu+trading" target="_blank" rel="noopener">Trading</a></li>
     </ul>
+  </section>
+
+  <section id="aktivitas" class="reveal">
+    <h2>Aktivitas GitHub</h2>
+    <div class="contrib" id="contrib" aria-live="polite">
+      <p class="empty">Memuat kontribusi…</p>
+    </div>
   </section>
 
   <section id="proyek" class="reveal">
@@ -185,6 +193,26 @@
       location.href = "mailto:" + copyBtn.dataset.email;
     }
   });
+
+  // GitHub contribution graph
+  (async () => {
+    const box = document.getElementById("contrib");
+    if (!box) return;
+    try {
+      const res = await fetch("https://github-contributions-api.jogruber.de/v4/justbwnn?y=last");
+      if (!res.ok) throw new Error(res.status);
+      const { contributions, total } = await res.json();
+      const cells = contributions.map(d =>
+        `<i class="l${d.level}" title="${d.count} kontribusi pada ${d.date}"></i>`
+      ).join("");
+      box.innerHTML =
+        `<p class="contrib-total"><b>${total.lastYear}</b> kontribusi dalam setahun terakhir</p>
+         <div class="contrib-grid">${cells}</div>
+         <p class="contrib-legend">Sedikit <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> Banyak</p>`;
+    } catch {
+      box.innerHTML = `<p class="empty">Grafik kontribusi tidak dapat dimuat. <a href="https://github.com/justbwnn" target="_blank" rel="noopener">Lihat di GitHub ↗</a></p>`;
+    }
+  })();
 
   // card spotlight follows cursor
   if (!reduced) document.querySelectorAll(".project").forEach(card => {
