@@ -248,9 +248,11 @@
     const btn = document.getElementById("moreActivity");
     if (keys.length > 6) {
       btn.hidden = false;
+      let open = false;
       btn.onclick = () => {
-        list.querySelectorAll(".extra").forEach(li => li.hidden = false);
-        btn.hidden = true;
+        open = !open;
+        list.querySelectorAll(".extra").forEach(li => li.hidden = !open);
+        btn.textContent = open ? "Sembunyikan aktivitas" : "Lihat semua aktivitas";
       };
     }
   }
