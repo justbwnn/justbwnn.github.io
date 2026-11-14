@@ -1,0 +1,6 @@
+# file uji lokal - tidak ikut deploy
+check.mjs
+check-render.mjs
+check-page.mjs
+dom.html
+*.log

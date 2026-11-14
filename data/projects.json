@@ -1,0 +1,68 @@
+{
+  "at": "2026-11-14T20:05:39.127Z",
+  "repos": [
+    {
+      "name": "ppp",
+      "url": "https://github.com/justbwnn/ppp",
+      "home": "",
+      "desc": "Skrip Python, proxy list, dan catatan pribadi.",
+      "lang": "",
+      "tag": "lainnya",
+      "pushed": 2024
+    },
+    {
+      "name": "Lyz",
+      "url": "https://github.com/justbwnn/Lyz",
+      "home": "https://lyzee.live",
+      "desc": "Catatan pribadi dan landing page pribadi.",
+      "lang": "",
+      "tag": "lainnya",
+      "pushed": 2022
+    },
+    {
+      "name": "babuteddy",
+      "url": "https://github.com/justbwnn/babuteddy",
+      "home": "",
+      "desc": "Aplikasi Node.js dengan database dan CLI.",
+      "lang": "",
+      "tag": "lainnya",
+      "pushed": 2022
+    },
+    {
+      "name": "justbwnn",
+      "url": "https://github.com/justbwnn/justbwnn",
+      "home": "",
+      "desc": "Halaman profil dan catatan pribadi.",
+      "lang": "",
+      "tag": "lainnya",
+      "pushed": 2022
+    },
+    {
+      "name": "bug",
+      "url": "https://github.com/justbwnn/bug",
+      "home": "",
+      "desc": "Pelacakan bug dan catatan perbaikan.",
+      "lang": "",
+      "tag": "lainnya",
+      "pushed": 2025
+    },
+    {
+      "name": "pp",
+      "url": "https://github.com/justbwnn/pp",
+      "home": "",
+      "desc": "Catatan dan latihan pemrograman Python.",
+      "lang": "Python",
+      "tag": "python",
+      "pushed": 2024
+    },
+    {
+      "name": "py",
+      "url": "https://github.com/justbwnn/py",
+      "home": "",
+      "desc": "Kumpulan script dan latihan pemrograman Python.",
+      "lang": "Python",
+      "tag": "python",
+      "pushed": 2025
+    }
+  ]
+}

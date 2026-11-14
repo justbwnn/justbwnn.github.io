@@ -31,21 +31,101 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     apply(t);
   });
 
-  // project filter
-  const cards = [...document.querySelectorAll("#projects .project")];
+  // daftar proyek: ambil dari GitHub API supaya selalu sinkron dengan repo asli
+  const REPO_API = "https://api.github.com/users/justbwnn/repos?per_page=100&sort=updated";
+  const CACHE_KEY = "porto-projects";
+  const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 jam
+  const SKIP = new Set(["justbwnn.github.io"]); // repo situs ini, bukan proyek
+
+  const LANG_TAG = {
+    JavaScript: "web", TypeScript: "web", HTML: "web", CSS: "web", Astro: "web", Vue: "web",
+    Python: "python", Jupyter: "python",
+    Shell: "tools", PowerShell: "tools", Dockerfile: "tools", Makefile: "tools"
+  };
+
+  const projectBox = document.getElementById("projects");
+  const filterBox = document.getElementById("filters");
+  const projectError = document.getElementById("projectsError");
   const empty = document.getElementById("empty");
-  if (cards.length) document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
-    document.querySelector(".filter.active").classList.remove("active");
-    b.classList.add("active");
-    const tag = b.dataset.tag;
-    let shown = 0;
-    cards.forEach(c => {
-      const ok = tag === "all" || c.dataset.tags.split(" ").includes(tag);
-      c.hidden = !ok;
-      if (ok) shown++;
-    });
-    if (empty) empty.hidden = shown > 0;
-  }));
+
+  // deskripsi repo berasal dari API luar — escape sebelum masuk HTML
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // terima repo mentah (dari API) maupun snapshot yang sudah dinormalisasi
+  const normalize = repos => repos
+    .filter(r => !r.fork && !SKIP.has(r.name))
+    .map(r => ({
+      name: r.name,
+      url: r.html_url || r.url,
+      home: r.homepage || r.home || "",
+      desc: r.description || r.desc || "Tanpa deskripsi.",
+      lang: r.language || r.lang || "",
+      tag: r.tag || LANG_TAG[r.language] || "lainnya",
+      pushed: r.pushed || (r.pushed_at ? new Date(r.pushed_at).getFullYear() : "")
+    }));
+
+  const renderProjects = list => {
+    if (!list.length) { projectBox.innerHTML = ""; filterBox.hidden = true; empty.hidden = false; return; }
+
+    const tags = [...new Set(list.map(p => p.tag))];
+    const LABEL = { web: "Web", python: "Python", tools: "Tools", lainnya: "Lainnya" };
+    filterBox.innerHTML =
+      `<button type="button" class="filter active" data-tag="all">Semua</button>` +
+      tags.map(t => `<button type="button" class="filter" data-tag="${t}">${LABEL[t]}</button>`).join("");
+    filterBox.hidden = false;
+
+    projectBox.innerHTML = list.map(p => `
+      <article class="project" data-tags="${esc(p.tag)}">
+        <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a></h3>
+        <p>${esc(p.desc)}</p>
+        <ul class="tags">${p.lang ? `<li>${esc(p.lang)}</li>` : ""}<li>${p.pushed}</li></ul>
+        <p class="proj-links">
+          <a href="${esc(p.url)}" target="_blank" rel="noopener">Source ↗</a>
+          ${p.home ? `<a href="${esc(p.home)}" target="_blank" rel="noopener">Demo ↗</a>` : ""}
+        </p>
+      </article>`).join("");
+
+    // pasang ulang filter (kartu digambar ulang)
+    filterBox.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
+      filterBox.querySelector(".filter.active")?.classList.remove("active");
+      b.classList.add("active");
+      const tag = b.dataset.tag;
+      let shown = 0;
+      projectBox.querySelectorAll(".project").forEach(c => {
+        const ok = tag === "all" || c.dataset.tags.split(" ").includes(tag);
+        c.hidden = !ok;
+        if (ok) shown++;
+      });
+      empty.hidden = shown > 0;
+    }));
+  };
+
+  (async () => {
+    if (!projectBox) return;
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (cached && Date.now() - cached.at < CACHE_TTL) {
+        renderProjects(cached.list);
+        return;
+      }
+      const res = await fetch(REPO_API, { headers: { Accept: "application/vnd.github+json" } });
+      if (!res.ok) throw new Error(res.status);
+      const list = normalize(await res.json());
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), list }));
+      renderProjects(list);
+    } catch {
+      // API kena rate limit / offline → pakai snapshot yang tersimpan di repo
+      try {
+        const snap = await fetch("data/projects.json").then(r => r.json());
+        renderProjects(snap.repos);
+      } catch {
+        projectBox.innerHTML = "";
+        filterBox.hidden = true;
+        projectError.hidden = false;
+      }
+    }
+  })();
 
   // scroll progress
   const bar = document.getElementById("progress");
@@ -140,13 +220,42 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     }
   }
 
-  // card spotlight follows cursor
-  if (!reduced) document.querySelectorAll(".project").forEach(card => {
-    card.addEventListener("pointermove", e => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", e.clientX - r.left + "px");
-      card.style.setProperty("--my", e.clientY - r.top + "px");
-    });
+  // cursor glow
+  const glow = document.getElementById("cursorGlow");
+  if (glow && !reduced && matchMedia("(hover: hover)").matches) {
+    addEventListener("pointermove", e => {
+      glow.style.transform = `translate3d(${e.clientX - 210}px, ${e.clientY - 210}px, 0)`;
+      glow.classList.add("on");
+    }, { passive: true });
+    document.addEventListener("pointerleave", () => glow.classList.remove("on"));
+  }
+
+  // skill percentage counter
+  const pctIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, target = +el.dataset.pct, t0 = performance.now();
+    const step = t => {
+      const p = Math.min(1, (t - t0) / 900);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + "%";
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    pctIO.unobserve(el);
+  }), { threshold: .6 });
+  document.querySelectorAll(".pct").forEach(el => pctIO.observe(el));
+
+  // back to top
+  const toTop = document.getElementById("toTop");
+  addEventListener("scroll", () => toTop.classList.toggle("show", scrollY > 600), { passive: true });
+  toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }));
+
+  // card spotlight follows cursor (delegasi: kartu digambar ulang dari API)
+  if (!reduced && projectBox) projectBox.addEventListener("pointermove", e => {
+    const card = e.target.closest(".project");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", e.clientX - r.left + "px");
+    card.style.setProperty("--my", e.clientY - r.top + "px");
   });
 
   // button spotlight + magnetic pull (smoothed with rAF lerp)
