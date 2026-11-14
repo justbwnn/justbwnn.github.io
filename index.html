@@ -111,13 +111,18 @@
 </div>
 
 <script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // reveal on scroll — run first so content never stays hidden
-  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .15 });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  try {
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .15 });
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  } catch {
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+  }
+
+  try {
+  document.getElementById("year").textContent = new Date().getFullYear();
 
   // theme toggle
   const root = document.documentElement, btn = document.getElementById("theme");
@@ -160,11 +165,13 @@
 
   // active nav link
   const links = [...document.querySelectorAll(".nav ul a")];
-  const secIO = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
-  }), { rootMargin: "-40% 0px -55% 0px" });
-  document.querySelectorAll("section[id]").forEach(s => secIO.observe(s));
+  try {
+    const secIO = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+    }), { rootMargin: "-40% 0px -55% 0px" });
+    document.querySelectorAll("section[id]").forEach(s => secIO.observe(s));
+  } catch {}
 
   // copy email
   const copyBtn = document.getElementById("copy");
@@ -259,6 +266,7 @@
     size(); frame();
     addEventListener("resize", size);
   }
+  } catch (e) { console.warn(e); }
 </script>
 </body>
 </html>
