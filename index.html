@@ -44,7 +44,7 @@
   <section id="tentang" class="reveal">
     <h2>Tentang</h2>
     <p class="lead">Mahasiswa angkatan 2026 Program Studi Informatika, Fakultas Ilmu Komputer, Universitas Amikom Yogyakarta. Biasa dipanggil Benny.</p>
-    <p>Tertarik pada pengembangan web dan senang membangun antarmuka yang cepat, rapi, dan mudah dipakai. Di luar kuliah, saya menghabiskan waktu bermain musik — terutama gitar.</p>
+    <p>Tertarik pada pengembangan web dan senang membangun antarmuka yang cepat, rapi, dan mudah dipakai. Di luar kuliah, saya menghabiskan waktu bermain musik — terutama gitar — dan mengikuti pasar trading.</p>
   </section>
 
   <section id="skill" class="reveal">
@@ -60,26 +60,13 @@
       <li>Web Development</li>
       <li>Musik</li>
       <li>Gitar</li>
+      <li>Trading</li>
     </ul>
   </section>
 
   <section id="proyek" class="reveal">
     <h2>Proyek</h2>
-    <div class="filters" role="group" aria-label="Filter proyek">
-      <button type="button" class="filter active" data-tag="all">Semua</button>
-      <button type="button" class="filter" data-tag="HTML">HTML</button>
-      <button type="button" class="filter" data-tag="JavaScript">JavaScript</button>
-      <button type="button" class="filter" data-tag="Python">Python</button>
-    </div>
-    <div class="grid" id="projects">
-      <article class="project" data-tags="HTML CSS JavaScript">
-        <h3>justbwnn.dev</h3>
-        <p>Situs portofolio pribadi ini — dibangun dari nol tanpa framework, di-hosting di GitHub Pages dengan domain kustom.</p>
-        <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
-        <a class="more" href="https://github.com/justbwnn/justbwnn.github.io" target="_blank" rel="noopener">Kode →</a>
-      </article>
-    </div>
-    <p class="empty" id="empty" hidden>Belum ada proyek dengan kategori ini.</p>
+    <p class="empty">Segera hadir.</p>
   </section>
 
   <section id="pendidikan" class="reveal">
@@ -87,17 +74,17 @@
     <ul class="timeline">
       <li>
         <time>2026 — sekarang</time>
-        <h3>Universitas Amikom Yogyakarta</h3>
+        <h3><a href="https://amikom.ac.id/" target="_blank" rel="noopener">Universitas Amikom Yogyakarta ↗</a></h3>
         <p>S1 Informatika, Fakultas Ilmu Komputer.</p>
       </li>
       <li>
         <time>2023 — 2026</time>
-        <h3>SMA Negeri 1 Pakem</h3>
+        <h3><a href="https://sman1pakem.sch.id/" target="_blank" rel="noopener">SMA Negeri 1 Pakem ↗</a></h3>
         <p>Sleman, DI Yogyakarta.</p>
       </li>
       <li>
         <time>2020 — 2023</time>
-        <h3>SMP Santo Aloysius Turi</h3>
+        <h3><a href="https://aloysiusturi.sch.id/" target="_blank" rel="noopener">SMP Santo Aloysius Turi ↗</a></h3>
         <p>Turi, Sleman, DI Yogyakarta.</p>
       </li>
     </ul>
@@ -149,7 +136,7 @@
   // project filter
   const cards = [...document.querySelectorAll("#projects .project")];
   const empty = document.getElementById("empty");
-  document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
+  if (cards.length) document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
     document.querySelector(".filter.active").classList.remove("active");
     b.classList.add("active");
     const tag = b.dataset.tag;
@@ -159,7 +146,7 @@
       c.hidden = !ok;
       if (ok) shown++;
     });
-    empty.hidden = shown > 0;
+    if (empty) empty.hidden = shown > 0;
   }));
 
   // scroll progress
@@ -200,6 +187,32 @@
       card.style.setProperty("--my", e.clientY - r.top + "px");
     });
   });
+
+  // button spotlight + magnetic pull (smoothed with rAF lerp)
+  if (!reduced) {
+    const btns = [...document.querySelectorAll(".cta a, .links a, .copy, form button, .theme")];
+    btns.forEach(el => {
+      el.classList.add("magnet");
+      const s = { tx: 0, ty: 0, cx: 0, cy: 0, on: false };
+      const loop = () => {
+        s.cx += (s.tx - s.cx) * .12;
+        s.cy += (s.ty - s.cy) * .12;
+        el.style.transform = `translate(${s.cx}px, ${s.cy}px)`;
+        if (s.on || Math.abs(s.tx - s.cx) > .05 || Math.abs(s.ty - s.cy) > .05) requestAnimationFrame(loop);
+        else el.style.transform = "";
+      };
+      el.addEventListener("pointermove", e => {
+        const r = el.getBoundingClientRect();
+        const x = e.clientX - r.left, y = e.clientY - r.top;
+        el.style.setProperty("--mx", x + "px");
+        el.style.setProperty("--my", y + "px");
+        s.tx = (x / r.width - .5) * 8;
+        s.ty = (y / r.height - .5) * 6;
+        if (!s.on) { s.on = true; requestAnimationFrame(loop); }
+      });
+      el.addEventListener("pointerleave", () => { s.tx = s.ty = 0; s.on = false; requestAnimationFrame(loop); });
+    });
+  }
 
   // particle network background
   const cv = document.getElementById("bg");
