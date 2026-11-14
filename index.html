@@ -71,6 +71,7 @@
       <p class="empty">Memuat kontribusi…</p>
     </div>
     <ol class="activity" id="activity" hidden></ol>
+    <button type="button" class="more-activity" id="moreActivity" hidden>Lihat semua aktivitas</button>
   </section>
 
   <section id="proyek" class="reveal">
@@ -228,20 +229,30 @@
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(d);
     });
-    const items = [...groups.entries()].reverse().slice(0, 8).map(([key, ds]) => {
+    const keys = [...groups.keys()].reverse();
+    list.innerHTML = keys.map((key, i) => {
       const [y, m] = key.split("-");
+      const ds = groups.get(key);
       const total = ds.reduce((s, d) => s + d.count, 0);
       const active = ds.filter(d => d.count > 0);
       const body = total
         ? `${total} kontribusi pada ${active.length} hari aktif`
         : `<span class="muted">Belum ada aktivitas pada periode ini.</span>`;
-      return `<li>
+      return `<li${i >= 6 ? ' class="extra" hidden' : ""}>
         <p class="act-month">${BULAN[+m - 1]} ${y}</p>
         <p class="act-body">${body}</p>
       </li>`;
     }).join("");
-    list.innerHTML = items;
     list.hidden = false;
+
+    const btn = document.getElementById("moreActivity");
+    if (keys.length > 6) {
+      btn.hidden = false;
+      btn.onclick = () => {
+        list.querySelectorAll(".extra").forEach(li => li.hidden = false);
+        btn.hidden = true;
+      };
+    }
   }
 
   // card spotlight follows cursor
