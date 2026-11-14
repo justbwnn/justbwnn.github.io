@@ -82,8 +82,13 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       tags.map(t => `<button type="button" class="filter" data-tag="${t}">${LABEL[t]}</button>`).join("");
     filterBox.hidden = false;
 
-    projectBox.innerHTML = list.map((p, i) => `
-      <article class="project" data-tags="${esc(p.tag)}">
+    // kartu disimpan sebagai elemen, bukan string: filter membuang yang tidak cocok dari grid
+    projectBox.innerHTML = "";
+    const cards = list.map((p, i) => {
+      const el = document.createElement("article");
+      el.className = "project";
+      el.dataset.tags = p.tag;
+      el.innerHTML = `
         <span class="project-no" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
         <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a></h3>
         <p>${esc(p.desc)}</p>
@@ -92,21 +97,23 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
           <a href="${esc(p.url)}" target="_blank" rel="noopener">Source ↗</a>
           ${p.home ? `<a href="${esc(p.home)}" target="_blank" rel="noopener">Demo ↗</a>` : ""}
         </p>
-        <i class="proj-bar" aria-hidden="true"></i>
-      </article>`).join("");
+        <i class="proj-bar" aria-hidden="true"></i>`;
+      return el;
+    });
 
-    // pasang ulang filter (kartu digambar ulang)
+    const show = tag => {
+      const shown = cards.filter(c => tag === "all" || c.dataset.tags.split(" ").includes(tag));
+      projectBox.replaceChildren(...shown);
+      // satu kategori = satu kolom, supaya kartu tidak melebar aneh
+      projectBox.classList.toggle("single", tag !== "all");
+      empty.hidden = shown.length > 0;
+    };
+    show("all");
+
     filterBox.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {
       filterBox.querySelector(".filter.active")?.classList.remove("active");
       b.classList.add("active");
-      const tag = b.dataset.tag;
-      let shown = 0;
-      projectBox.querySelectorAll(".project").forEach(c => {
-        const ok = tag === "all" || c.dataset.tags.split(" ").includes(tag);
-        c.hidden = !ok;
-        if (ok) shown++;
-      });
-      empty.hidden = shown > 0;
+      show(b.dataset.tag);
     }));
   };
 
