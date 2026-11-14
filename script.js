@@ -87,11 +87,12 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
         <span class="project-no" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
         <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a></h3>
         <p>${esc(p.desc)}</p>
-        <ul class="tags">${p.lang ? `<li>${esc(p.lang)}</li>` : ""}<li>${p.pushed}</li></ul>
+        <ul class="tags">${p.lang ? `<li>${esc(p.lang)}</li>` : ""}<li>${esc(p.pushed)}</li></ul>
         <p class="proj-links">
           <a href="${esc(p.url)}" target="_blank" rel="noopener">Source ↗</a>
           ${p.home ? `<a href="${esc(p.home)}" target="_blank" rel="noopener">Demo ↗</a>` : ""}
         </p>
+        <i class="proj-bar" aria-hidden="true"></i>
       </article>`).join("");
 
     // pasang ulang filter (kartu digambar ulang)
