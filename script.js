@@ -65,9 +65,16 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       pushed: r.pushed || (r.pushed_at ? new Date(r.pushed_at).getFullYear() : "")
     }));
 
+  const setStat = (key, value) => {
+    const el = document.querySelector(`[data-stat="${key}"]`);
+    if (el) el.textContent = value;
+  };
+
   const renderProjects = list => {
     if (!list.length) { projectBox.innerHTML = ""; filterBox.hidden = true; empty.hidden = false; return; }
 
+    setStat("projects", list.length);
+    setStat("langs", new Set(list.map(p => p.lang).filter(Boolean)).size);
     const tags = [...new Set(list.map(p => p.tag))];
     const LABEL = { web: "Web", python: "Python", tools: "Tools", lainnya: "Lainnya" };
     filterBox.innerHTML =
@@ -75,8 +82,9 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       tags.map(t => `<button type="button" class="filter" data-tag="${t}">${LABEL[t]}</button>`).join("");
     filterBox.hidden = false;
 
-    projectBox.innerHTML = list.map(p => `
+    projectBox.innerHTML = list.map((p, i) => `
       <article class="project" data-tags="${esc(p.tag)}">
+        <span class="project-no" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
         <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a></h3>
         <p>${esc(p.desc)}</p>
         <ul class="tags">${p.lang ? `<li>${esc(p.lang)}</li>` : ""}<li>${p.pushed}</li></ul>
@@ -129,9 +137,11 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // scroll progress
   const bar = document.getElementById("progress");
+  const nav = document.querySelector(".nav");
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
     bar.style.setProperty("--p", max > 0 ? scrollY / max : 0);
+    nav?.classList.toggle("scrolled", scrollY > 12);
   };
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
@@ -146,18 +156,38 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.querySelectorAll("section[id]").forEach(s => secIO.observe(s));
   } catch {}
 
-  // copy email
-  const copyBtn = document.getElementById("copy");
-  if (copyBtn) copyBtn.addEventListener("click", async () => {
+  // copy email (tombol teks + tombol ikon di kartu profil)
+  const copyBtns = [...document.querySelectorAll('[data-email][id^="copy"]')];
+  copyBtns.forEach(btn => btn.addEventListener("click", async () => {
+    const label = btn.getAttribute("aria-label") || btn.textContent.trim();
+    const isIcon = !!btn.querySelector("svg");
+    const markDone = () => {
+      btn.classList.add("done");
+      if (isIcon) btn.setAttribute("aria-label", "Email tersalin");
+      else btn.textContent = "Tersalin ✓";
+      setTimeout(() => {
+        btn.classList.remove("done");
+        btn.setAttribute("aria-label", label);
+        if (!isIcon) btn.textContent = "Salin Email";
+      }, 1800);
+    };
     try {
-      await navigator.clipboard.writeText(copyBtn.dataset.email);
-      copyBtn.textContent = "Tersalin ✓";
-      copyBtn.classList.add("done");
-      setTimeout(() => { copyBtn.textContent = "Salin Email"; copyBtn.classList.remove("done"); }, 1800);
+      await navigator.clipboard.writeText(btn.dataset.email);
+      markDone();
     } catch {
-      location.href = "mailto:" + copyBtn.dataset.email;
+      // fallback tanpa navigator.clipboard: pakai textarea sementara, jangan navigasi keluar
+      const ta = document.createElement("textarea");
+      ta.value = btn.dataset.email;
+      ta.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch {}
+      ta.remove();
+      if (ok) markDone();
+      else location.href = "mailto:" + btn.dataset.email;
     }
-  });
+  }));
 
   // GitHub contribution graph
   (async () => {
@@ -174,6 +204,7 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
         `<p class="contrib-total"><b>${total.lastYear}</b> kontribusi dalam setahun terakhir</p>
          <div class="contrib-grid">${cells}</div>
          <p class="contrib-legend">Sedikit <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> Banyak</p>`;
+      setStat("contrib", total.lastYear);
       renderActivity(contributions);
     } catch {
       box.innerHTML = `<p class="empty">Grafik kontribusi tidak dapat dimuat. <a href="https://github.com/justbwnn" target="_blank" rel="noopener">Lihat di GitHub ↗</a></p>`;

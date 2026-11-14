@@ -2,5 +2,6 @@
 check.mjs
 check-render.mjs
 check-page.mjs
+check-responsive.mjs
 dom.html
 *.log
