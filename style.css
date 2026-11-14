@@ -134,6 +134,8 @@ p { margin: 0 0 12px; }
   font: 500 .8125rem/1 var(--mono); padding: 8px 12px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--panel); color: var(--soft);
 }
+.tags li a { color: inherit; display: block; }
+.tags li:hover { border-color: var(--accent); color: var(--accent); }
 
 /* skills */
 .skills { display: grid; gap: 16px; }
