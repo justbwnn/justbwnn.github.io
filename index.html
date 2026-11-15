@@ -9,14 +9,14 @@
 <meta property="og:description" content="Portofolio Alfonsus Benny Christian Saputra — Informatika, Universitas Amikom Yogyakarta.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://justbwnn.dev/">
-<meta name="theme-color" content="#08090c">
+<meta name="theme-color" content="#0b0a12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark"; document.documentElement.classList.add("js");</script>
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="favicon.png">
-<link rel="stylesheet" href="style.css?v=20261115h">
+<link rel="stylesheet" href="style.css?v=20261115i">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -115,17 +115,17 @@
   <section id="skill" class="reveal">
     <h2>Skill</h2>
     <div class="skills">
-      <div class="skill-row"><span>HTML &amp; CSS</span><div class="bar"><i style="--w:85%"></i></div><b class="pct" data-pct="85">0%</b></div>
-      <div class="skill-row"><span>JavaScript</span><div class="bar"><i style="--w:70%"></i></div><b class="pct" data-pct="70">0%</b></div>
-      <div class="skill-row"><span>Git &amp; GitHub</span><div class="bar"><i style="--w:65%"></i></div><b class="pct" data-pct="65">0%</b></div>
-      <div class="skill-row"><span>Python</span><div class="bar"><i style="--w:55%"></i></div><b class="pct" data-pct="55">0%</b></div>
+      <div class="skill-row"><span>HTML &amp; CSS</span><p>Antarmuka responsif, tema terang/gelap, animasi CSS.</p></div>
+      <div class="skill-row"><span>JavaScript</span><p>DOM, <code>fetch</code> API, render dinamis, tanpa framework.</p></div>
+      <div class="skill-row"><span>Git &amp; GitHub</span><p>Commit, branch, GitHub Actions untuk sinkron data.</p></div>
+      <div class="skill-row"><span>Python</span><p>Skrip, olah data, dasar otomasi.</p></div>
     </div>
     <h2 style="margin-top:32px">Minat</h2>
     <ul class="tags">
-      <li><a href="https://www.google.com/search?q=apa+itu+web+development" target="_blank" rel="noopener">Web Development</a></li>
-      <li><a href="https://www.google.com/search?q=apa+itu+musik" target="_blank" rel="noopener">Musik</a></li>
-      <li><a href="https://www.google.com/search?q=apa+itu+gitar" target="_blank" rel="noopener">Gitar</a></li>
-      <li><a href="https://www.google.com/search?q=apa+itu+trading" target="_blank" rel="noopener">Trading</a></li>
+      <li>Web Development</li>
+      <li>Musik</li>
+      <li>Gitar</li>
+      <li>Trading</li>
     </ul>
   </section>
 
@@ -171,13 +171,15 @@
 
   <section id="kontak" class="reveal">
     <h2>Kontak</h2>
-    <form action="https://formsubmit.co/bennychristian83@gmail.com" method="POST">
+    <form action="https://formsubmit.co/bennychristian83@gmail.com" method="POST" id="contactForm" novalidate>
       <input type="hidden" name="_subject" value="Pesan dari justbwnn.dev">
+      <input type="hidden" name="_captcha" value="false">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <label>Nama <input name="name" required autocomplete="name"></label>
       <label>Email <input type="email" name="email" required autocomplete="email"></label>
       <label>Pesan <textarea name="message" required></textarea></label>
       <button type="submit">Kirim</button>
+      <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
     </form>
     <ul class="links contact-links">
       <li><a href="mailto:bennychristian83@gmail.com">Email</a></li>
@@ -192,6 +194,6 @@
 
 <button type="button" class="to-top" id="toTop" aria-label="Kembali ke atas">↑</button>
 
-<script src="script.js?v=20261115h" defer></script>
+<script src="script.js?v=20261115i" defer></script>
 </body>
 </html>

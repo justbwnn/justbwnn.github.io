@@ -269,19 +269,37 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.addEventListener("pointerleave", () => glow.classList.remove("on"));
   }
 
-  // skill percentage counter
-  const pctIO = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    const el = e.target, target = +el.dataset.pct, t0 = performance.now();
-    const step = t => {
-      const p = Math.min(1, (t - t0) / 900);
-      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + "%";
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-    pctIO.unobserve(el);
-  }), { threshold: .6 });
-  document.querySelectorAll(".pct").forEach(el => pctIO.observe(el));
+  // form kontak: kirim via fetch, jangan pindah halaman
+  const form = document.getElementById("contactForm");
+  const status = document.getElementById("formStatus");
+  if (form && status) form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const btn = form.querySelector('button[type="submit"]');
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Mengirim…";
+    status.className = "form-status";
+    status.textContent = "";
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" }
+      });
+      if (!res.ok) throw new Error(res.status);
+      form.reset();
+      status.className = "form-status ok";
+      status.textContent = "Pesan terkirim. Terima kasih!";
+    } catch {
+      // jaringan/endpoint gagal: jangan buang isi form, tawarkan email langsung
+      status.className = "form-status err";
+      status.innerHTML = 'Gagal mengirim. Coba lagi, atau email langsung <a href="mailto:bennychristian83@gmail.com">bennychristian83@gmail.com</a>.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
 
   // back to top
   const toTop = document.getElementById("toTop");
@@ -353,14 +371,14 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
           const a = pts[i], b = pts[j];
           const d = Math.hypot(a.x - b.x, a.y - b.y);
           if (d < L) {
-            ctx.strokeStyle = `rgba(94,234,212,${(1 - d / L) * .1})`;
+            ctx.strokeStyle = `rgba(167,139,250,${(1 - d / L) * .12})`;
             ctx.lineWidth = devicePixelRatio * .6;
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
       }
       for (const p of pts) {
-        ctx.fillStyle = root.dataset.theme === "light" ? "rgba(79,70,229,.22)" : "rgba(129,140,248,.35)";
+        ctx.fillStyle = root.dataset.theme === "light" ? "rgba(109,40,217,.22)" : "rgba(240,168,104,.4)";
         ctx.beginPath(); ctx.arc(p.x, p.y, 1.2 * devicePixelRatio, 0, 7); ctx.fill();
       }
       requestAnimationFrame(frame);
